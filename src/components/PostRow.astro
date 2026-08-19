@@ -1,0 +1,19 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { fmtShort } from '../lib/posts';
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+---
+
+<li>
+  <a class="post-row" href={`/blog/${post.id}/`}>
+    <time class="row-date" datetime={post.data.pubDate.toISOString()}>
+      {fmtShort(post.data.pubDate)}
+    </time>
+    <span class="row-title">{post.data.title}</span>
+  </a>
+</li>

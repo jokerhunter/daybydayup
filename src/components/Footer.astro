@@ -1,0 +1,11 @@
+---
+import { SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© {year} {SITE.author}</span>
+    <span>用 Markdown 写就 · 由 <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 驱动</span>
+  </div>
+</footer>

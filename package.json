@@ -1,0 +1,20 @@
+{
+  "name": "lucas-blog",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A personal blog powered by Astro — write posts in Markdown, ship static HTML.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "astro": "^7.2.2"
+  },
+  "overrides": {
+    "vite": "8.1.5"
+  }
+}

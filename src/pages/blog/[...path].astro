@@ -1,0 +1,235 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostRow from '../../components/PostRow.astro';
+import { fmtDate, postDir, postFile, readingTime } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const all = await getCollection('blog');
+  const dirSet = new Set<string>();
+  for (const p of all) {
+    const dir = postDir(p);
+    if (!dir) continue;
+    const parts = dir.split('/');
+    let acc = '';
+    for (const part of parts) {
+      acc = acc ? `${acc}/${part}` : part;
+      dirSet.add(acc);
+    }
+  }
+  return [
+    ...[...dirSet].map((dir) => ({
+      params: { path: dir },
+      props: { kind: 'dir' as const, dir },
+    })),
+    ...all.map((post) => ({
+      params: { path: post.id },
+      props: { kind: 'post' as const, post },
+    })),
+  ];
+}
+
+type Props =
+  | { kind: 'dir'; dir: string }
+  | { kind: 'post'; post: CollectionEntry<'blog'> };
+
+const props = Astro.props as Props;
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// ---- 面包屑 ----
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+function dirCrumbs(dir: string): Crumb[] {
+  const out: Crumb[] = [
+    { label: '~', href: '/' },
+    { label: 'blog', href: '/blog/' },
+  ];
+  const segs = dir.split('/');
+  let acc = '';
+  segs.forEach((s, i) => {
+    acc = acc ? `${acc}/${s}` : s;
+    out.push({ label: s, href: i < segs.length - 1 ? `/blog/${acc}/` : undefined });
+  });
+  return out;
+}
+
+function postCrumbs(post: CollectionEntry<'blog'>): Crumb[] {
+  const out: Crumb[] = [
+    { label: '~', href: '/' },
+    { label: 'blog', href: '/blog/' },
+  ];
+  const dir = postDir(post);
+  if (dir) {
+    const segs = dir.split('/');
+    let acc = '';
+    for (const s of segs) {
+      acc = acc ? `${acc}/${s}` : s;
+      out.push({ label: s, href: `/blog/${acc}/` });
+    }
+  }
+  out.push({ label: `${postFile(post)}.md` });
+  return out;
+}
+
+// ---- 文件夹页数据 ----
+let dirName = '';
+let crumbs: Crumb[] = [];
+let childDirs: { name: string; full: string }[] = [];
+let directPosts: CollectionEntry<'blog'>[] = [];
+
+if (props.kind === 'dir') {
+  dirName = props.dir.split('/').pop()!;
+  crumbs = dirCrumbs(props.dir);
+  const depth = props.dir.split('/').length;
+
+  directPosts = allPosts
+    .filter((p) => postDir(p) === props.dir)
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+  const map = new Map<string, string>();
+  for (const p of allPosts) {
+    const parts = postDir(p).split('/');
+    if (parts.length > depth && parts.slice(0, depth).join('/') === props.dir) {
+      if (!map.has(parts[depth])) {
+        map.set(parts[depth], parts.slice(0, depth + 1).join('/'));
+      }
+    }
+  }
+  childDirs = [...map.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0], 'zh-CN'))
+    .map(([name, full]) => ({ name, full }));
+}
+
+// ---- 文章页数据 ----
+let Content: any = null;
+let prev: CollectionEntry<'blog'> | undefined;
+let next: CollectionEntry<'blog'> | undefined;
+let post: CollectionEntry<'blog'> | undefined;
+
+if (props.kind === 'post') {
+  post = props.post;
+  ({ Content } = await render(post));
+  crumbs = postCrumbs(post);
+  const sorted = [...allPosts].sort(
+    (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf()
+  );
+  const idx = sorted.findIndex((p) => p.id === post!.id);
+  prev = idx > 0 ? sorted[idx - 1] : undefined;
+  next = idx >= 0 && idx < sorted.length - 1 ? sorted[idx + 1] : undefined;
+}
+
+const pageTitle = post ? post.data.title : `${dirName}/`;
+const pageDesc = post
+  ? post.data.description
+  : `${dirName}/ 目录 · ${directPosts.length} 篇文章`;
+---
+
+<BaseLayout title={pageTitle} description={pageDesc}>
+  <div class="container">
+    <nav class="crumbs" aria-label="面包屑">
+      {
+        crumbs.map((c, i) => [
+          i > 0 && <span class="crumbs-sep">/</span>,
+          c.href ? (
+            <a href={c.href}>{c.label}</a>
+          ) : (
+            <span class="crumbs-current">{c.label}</span>
+          ),
+        ])
+      }
+    </nav>
+
+    {
+      post ? (
+        <article class="post">
+          <header class="post-head">
+            <h1>{post.data.title}</h1>
+            <div class="post-meta">
+              <time datetime={post.data.pubDate.toISOString()}>{fmtDate(post.data.pubDate)}</time>
+              <span class="sep">·</span>
+              <span>{readingTime(post.body)} 分钟阅读</span>
+              {
+                post.data.updatedDate && (
+                  <>
+                    <span class="sep">·</span>
+                    <span>更新于 {fmtDate(post.data.updatedDate)}</span>
+                  </>
+                )
+              }
+            </div>
+          </header>
+          <div class="prose">
+            <Content />
+          </div>
+          {
+            (prev || next) && (
+              <nav class="post-nav" aria-label="文章导航">
+                {
+                  prev ? (
+                    <a class="post-nav-item" href={`/blog/${prev.id}/`}>
+                      <span class="nav-label">← 上一篇</span>
+                      <span class="nav-title">{prev.data.title}</span>
+                    </a>
+                  ) : <span />
+                }
+                {
+                  next ? (
+                    <a class="post-nav-item post-nav-next" href={`/blog/${next.id}/`}>
+                      <span class="nav-label">下一篇 →</span>
+                      <span class="nav-title">{next.data.title}</span>
+                    </a>
+                  ) : <span />
+                }
+              </nav>
+            )
+          }
+        </article>
+      ) : (
+        <div class="dir-page">
+          <header class="page-head">
+            <h1>{dirName}/</h1>
+            <p class="page-sub">
+              <code>src/content/blog/{props.kind === 'dir' ? props.dir : ''}/</code> · 共 {directPosts.length} 篇文章
+            </p>
+          </header>
+
+          {
+            childDirs.length > 0 && (
+              <section class="dir-section">
+                <h2 class="dir-section-title">子目录</h2>
+                <ul class="post-list">
+                  {
+                    childDirs.map((d) => (
+                      <li>
+                        <a class="post-row" href={`/blog/${d.full}/`}>
+                          <span class="row-date">dir</span>
+                          <span class="row-title">{d.name}/</span>
+                        </a>
+                      </li>
+                    ))
+                  }
+                </ul>
+              </section>
+            )
+          }
+
+          <section class="dir-section">
+            <h2 class="dir-section-title">文章</h2>
+            {
+              directPosts.length > 0 ? (
+                <ul class="post-list">
+                  {directPosts.map((p) => <PostRow post={p} />)}
+                </ul>
+              ) : (
+                <p class="empty">这个目录下还没有文章。</p>
+              )
+            }
+          </section>
+        </div>
+      )
+    }
+  </div>
+</BaseLayout>

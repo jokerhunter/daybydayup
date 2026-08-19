@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+---
+
+<BaseLayout title="关于" description={`关于 ${SITE.author}`}>
+  <div class="container page">
+    <header class="page-head">
+      <h1>关于</h1>
+      <p class="page-sub">关于我和这个博客</p>
+    </header>
+    <div class="prose">
+      <p>你好，我是 <strong>{SITE.author}</strong>，欢迎来到我的博客。</p>
+      <p>
+        这里记录我在编程、阅读和生活中的所思所学。博客基于
+        <a href="https://astro.build" target="_blank" rel="noopener">Astro</a> 构建，
+        所有文章都以 Markdown 写成——写作只需关心内容本身，其余交给工具。
+      </p>
+      <h2>关于这个博客</h2>
+      <ul>
+        <li>文章全部存放在 <code>src/content/blog/</code>，<strong>文件夹即分类，文件即文章</strong>；</li>
+        <li>站点的<a href="/blog/">目录树</a>与仓库文件夹结构一一对应，改文件夹即改站点；</li>
+        <li>构建时自动生成纯静态 HTML，加载快、无需服务器；</li>
+        <li>支持 RSS 订阅、站点地图与深浅色主题切换。</li>
+      </ul>
+      <h2>联系我</h2>
+      <p>如果你有任何想法或建议，欢迎通过 <a href="/rss.xml">RSS</a> 订阅本博客，或发邮件联系我。</p>
+    </div>
+  </div>
+</BaseLayout>

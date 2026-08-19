@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostRow from '../components/PostRow.astro';
+import { SITE } from '../consts';
+import { getPublishedPosts, groupByYear } from '../lib/posts';
+
+const posts = await getPublishedPosts();
+const years = groupByYear(posts.slice(0, 10));
+---
+
+<BaseLayout>
+  <div class="container">
+    <section class="hero">
+      <h1>{SITE.author}</h1>
+      <p class="hero-desc">
+        写代码、写生活、写思考。
+        <span class="hero-desc-line">
+          所有文章由 Markdown 驱动，<a class="ulink" href="/blog/">目录</a>与仓库文件夹结构一一对应。
+        </span>
+        <span class="hero-desc-line">
+          这是我的 <a class="ulink" href="/blog/">博客</a> · <a class="ulink" href="/about">关于我</a> · <a class="ulink" href="/rss.xml">RSS</a>。
+        </span>
+      </p>
+    </section>
+
+    <section class="year-groups">
+      {
+        years.map(({ year, posts: list }) => (
+          <div class="year-group">
+            <div class="year-label">{year}</div>
+            <ul class="post-list">
+              {list.map((post) => <PostRow post={post} />)}
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+
+    <div class="more-link">
+      <a href="/blog/">查看全部目录 →</a>
+    </div>
+  </div>
+</BaseLayout>

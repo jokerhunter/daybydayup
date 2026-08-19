@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DirTree from '../../components/DirTree.astro';
+import { getPublishedPosts, buildTree } from '../../lib/posts';
+
+const posts = await getPublishedPosts();
+const tree = buildTree(posts);
+---
+
+<BaseLayout title="目录" description="博客目录——与 src/content/blog 文件夹结构一致">
+  <div class="container page">
+    <header class="page-head">
+      <h1>目录</h1>
+      <p class="page-sub">
+        与 <code>src/content/blog/</code> 文件夹结构一致 · 共 {posts.length} 篇文章
+      </p>
+    </header>
+
+    <div class="tree">
+      <div class="tree-root">content/blog/</div>
+      <ul class="tree-list">
+        {tree.children?.map((node) => <DirTree node={node} />)}
+      </ul>
+    </div>
+
+    <p class="tree-hint">
+      文件夹即分类，文件即文章。新增一个 <code>.md</code> 文件到对应文件夹，这里就会多一行。
+    </p>
+  </div>
+</BaseLayout>

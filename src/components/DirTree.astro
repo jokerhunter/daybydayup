@@ -1,0 +1,36 @@
+---
+import DirTree from './DirTree.astro';
+import type { DirNode } from '../lib/posts';
+import { fmtShort } from '../lib/posts';
+
+interface Props {
+  node: DirNode;
+}
+
+const { node } = Astro.props;
+---
+
+{
+  node.type === 'dir' ? (
+    <li class="tree-li">
+      <details open>
+        <summary class="dir-row">
+          <a class="dir-name" href={`/blog/${node.path}/`}>{node.name}/</a>
+          <span class="dir-count">{node.postCount}</span>
+        </summary>
+        <ul class="tree-sub">
+          {node.children?.map((child) => <DirTree node={child} />)}
+        </ul>
+      </details>
+    </li>
+  ) : (
+    <li class="tree-li">
+      <a class="file-row" href={`/blog/${node.post!.id}/`}>
+        <span class="file-name">{node.name}<span class="file-ext">.md</span></span>
+        <time class="file-date" datetime={node.post!.data.pubDate.toISOString()}>
+          {fmtShort(node.post!.data.pubDate)}
+        </time>
+      </a>
+    </li>
+  )
+}
