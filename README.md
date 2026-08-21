@@ -1,4 +1,4 @@
-# Lucas 的博客
+# Aiden Jude 的博客
 
 一个基于 **Astro 7** 的个人博客。设计语言参考 [4real.ltd](https://www.4real.ltd/)：单色 ink 体系、Space Grotesk + IBM Plex Mono 字体、极简排版。**文件夹即目录，Markdown 即文章**——站点目录树与 `src/content/blog/` 的文件夹结构完全一致。
 
@@ -59,7 +59,7 @@ draft: false               # 可选：true 表示草稿（不出现在目录）
 ## 📁 目录结构
 
 ```text
-lucasBlog/
+aidenJudeBlog/
 ├── astro.config.mjs        # 站点配置（网址、代码高亮双主题）
 ├── package.json
 ├── public/

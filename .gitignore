@@ -1,0 +1,15 @@
+# build output
+dist/
+# generated types
+.astro/
+# dependencies
+node_modules/
+# local npm cache (used in this sandbox)
+.npm-cache/
+# logs
+npm-debug.log*
+# environment
+.env
+.env.production
+# macOS
+.DS_Store

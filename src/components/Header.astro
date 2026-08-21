@@ -17,6 +17,7 @@ const isActive = (href: string) =>
     <nav class="nav" aria-label="主导航">
       <a href="/" class:list={['nav-link', { active: isActive('/') }]}>首页</a>
       <a href="/blog/" class:list={['nav-link', { active: isActive('/blog/') }]}>目录</a>
+      <a href="/projects" class:list={['nav-link', { active: isActive('/projects') }]}>作品</a>
       <a href="/about" class:list={['nav-link', { active: isActive('/about') }]}>关于</a>
       <a href="/rss.xml" class="nav-link nav-mono">rss</a>
       <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切换深色 / 浅色主题">

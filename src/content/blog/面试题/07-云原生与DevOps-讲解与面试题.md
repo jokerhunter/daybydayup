@@ -140,7 +140,7 @@ RUN mvn package -DskipTests
 
 面试话术：
 
-> "我们零碳能源云平台拆了 12 个微服务。我先写了一个**统一的基础镜像**（JDK17 + 时区 + 字体 + 健康检查脚本），12 个服务的 Dockerfile 只需要 4 行：FROM 基础镜像 → COPY jar → EXPOSE → ENTRYPOINT，保证了 12 个服务的构建规范一致。中间还踩过一个坑：容器里默认时区是 UTC，日终统计的数据对不上，后来在基础镜像里统一装了 Asia/Shanghai 时区。"
+> "我们能源物联网平台拆了 12 个微服务。我先写了一个**统一的基础镜像**（JDK17 + 时区 + 字体 + 健康检查脚本），12 个服务的 Dockerfile 只需要 4 行：FROM 基础镜像 → COPY jar → EXPOSE → ENTRYPOINT，保证了 12 个服务的构建规范一致。中间还踩过一个坑：容器里默认时区是 UTC，日终统计的数据对不上，后来在基础镜像里统一装了 Asia/Shanghai 时区。"
 
 ### 生产级 Dockerfile 示例（带详细注释）
 

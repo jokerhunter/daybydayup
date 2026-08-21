@@ -1,0 +1,143 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../consts';
+
+/**
+ * 作品页：项目展示。
+ * 项目数据直接写在此处，修改/新增项目只需编辑 projects 数组。
+ */
+const projects = [
+  {
+    name: 'Aiden Blog — 本站',
+    year: '2026',
+    role: '独立开发',
+    tags: ['Astro', 'TypeScript', 'Markdown', 'CI/CD'],
+    highlights: [
+      '文件夹即目录、Markdown 即文章的纯静态博客，构建后 30+ 页 HTML 毫秒级加载',
+      '支持 RSS 订阅、sitemap、深浅色主题切换与目录树导航',
+      '面试题九大模块 + 技术之路年度复盘全部由 Markdown 驱动',
+    ],
+  },
+  {
+    name: 'RAG 知识库问答助手（Demo）',
+    year: '2025',
+    role: '全栈开发',
+    tags: ['LangChain4j', 'pgvector', 'SSE', 'Vue3'],
+    highlights: [
+      '多格式文档上传 → 语义分块 → 向量化 → 余弦相似度检索的完整 RAG 链路',
+      'Prompt 约束回答范围 +「不知道」保护机制，Redis 管理多轮对话上下文',
+      'Function Calling 编排内部工具，支持多轮任务中动态选择与降级重试',
+    ],
+  },
+  {
+    name: 'DAG 指标计算引擎（Demo）',
+    year: '2023',
+    role: '后端开发',
+    tags: ['Spring Boot', 'CompletableFuture', 'Redis', 'TDengine'],
+    highlights: [
+      '基于有向无环图的指标依赖编排，无依赖节点自动并行执行',
+      'CompletableFuture 异步流水线 + 线程池隔离，复杂指标计算从 3 分钟压到 8 秒',
+      'Caffeine L1 + Redis L2 多级缓存，聚合查询接口 200ms 以内',
+    ],
+  },
+  {
+    name: '秒杀抢购演练场（Demo）',
+    year: '2021',
+    role: '后端开发',
+    tags: ['Spring Cloud', 'Redis + Lua', 'RocketMQ', 'JMeter'],
+    highlights: [
+      'Lua 脚本原子预减库存解决超卖，DCL + 热点 Key 打散防止缓存击穿',
+      '事务消息 + 幂等键保障跨服务最终一致性，重复消费安全',
+      'JMeter 压测脚本与压测报告齐全，可用于高并发方案教学演示',
+    ],
+  },
+];
+---
+
+<BaseLayout title="作品" description={`${SITE.author} 的作品与项目`}>
+  <div class="container page">
+    <header class="page-head">
+      <h1>作品</h1>
+      <p class="page-sub">这些年做过的一些有意思的项目</p>
+    </header>
+    <div class="project-list">
+      {
+        projects.map((p) => (
+          <article class="project-card">
+            <div class="project-head">
+              <h2>{p.name}</h2>
+              <span class="project-year">{p.year}</span>
+            </div>
+            <p class="project-role">{p.role}</p>
+            <ul class="project-highlights">
+              {p.highlights.map((h) => <li>{h}</li>)}
+            </ul>
+            <div class="project-tags">
+              {p.tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+    <p class="more-link">
+      <a href="/blog/">更多技术文章见目录 →</a>
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .project-card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    background: var(--surface-2);
+  }
+  .project-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .project-head h2 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+  .project-year {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    opacity: 0.7;
+  }
+  .project-role {
+    margin: 0.25rem 0 0.75rem;
+    font-size: 0.9rem;
+    opacity: 0.75;
+  }
+  .project-highlights {
+    margin: 0 0 0.9rem;
+    padding-left: 1.2rem;
+  }
+  .project-highlights li {
+    margin: 0.3rem 0;
+    font-size: 0.92rem;
+    line-height: 1.7;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    opacity: 0.85;
+  }
+</style>

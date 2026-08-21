@@ -4,10 +4,10 @@
  */
 export const SITE = {
   /** 部署后的站点地址（用于 sitemap 与 RSS），本地预览时不影响 dev server */
-  url: 'https://lucas-blog.dev',
-  title: 'Lucas 的博客',
+  url: 'https://aiden-jude.dev',
+  title: 'Aiden Jude 的博客',
   description: '写代码、写生活、写思考。用 Astro 构建的个人博客——文件夹即目录，Markdown 即文章。',
-  author: 'Lucas',
+  author: 'Aiden Jude',
   lang: 'zh-CN',
 } as const;
 
